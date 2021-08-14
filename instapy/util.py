@@ -496,17 +496,20 @@ def getMediaData(
     query,
     browser,
 ):
-    additional_data = get_additional_data(browser)
-    data = additional_data["graphql"]["shortcode_media"]
+    try: 
+        additional_data = get_additional_data(browser)
+        data = additional_data["graphql"]["shortcode_media"]
 
-    if query.find(".") == -1:
-        data = data[query]
-    else:
-        subobjects = query.split(".")
-        for subobject in subobjects:
-            data = data[subobject]
+        if query.find(".") == -1:
+            data = data[query]
+        else:
+            subobjects = query.split(".")
+            for subobject in subobjects:
+                data = data[subobject]
 
-    return data
+        return data
+    except:
+        return None    
 
 
 def update_activity(
@@ -1152,11 +1155,10 @@ def get_relationship_counts(browser, username, logger):
 
     user_link = "https://www.instagram.com/{}/".format(username)
 
-    # check URL of the webpage, if it already is user's profile page,
-    # then do not navigate to it again
-    web_address_navigator(browser, user_link)
-
     try:
+        # check URL of the webpage, if it already is user's profile page,
+        # then do not navigate to it again
+        web_address_navigator(browser, user_link)
         followers_count = browser.execute_script(
             "return window._sharedData.entry_data."
             "ProfilePage[0].graphql.user.edge_followed_by.count"
